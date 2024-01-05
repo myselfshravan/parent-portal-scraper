@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import asyncio
-from lambda_function import main
+# from lambda_function import main
+from small_code import main
 
 app = Flask(__name__)
 
