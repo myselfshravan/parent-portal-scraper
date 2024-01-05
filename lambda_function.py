@@ -285,7 +285,11 @@ async def login(usn, dob):
         async with session.get(baseurl) as resp:
             body = await resp.content.read()
             dom = etree.HTML(body)
-            token = dom.xpath('//input[@value="1"]/@name')[0]
+            try:
+                token = dom.xpath('//input[@value="1"]/@name')[0]
+            except IndexError:
+                print("Input element not found")
+                token = None
             data = {
                 'username': usn,
                 'dd': dd,
