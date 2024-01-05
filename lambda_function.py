@@ -29,8 +29,12 @@ async def scrape_login_dashboard(respobj):
     studdetailshead = dom.xpath('//*[@class="cn-basic-details"]/table/tbody/tr/td/span/text()')
     studdetailstable = dom.xpath('//*[@class="cn-basic-details"]/table/tbody/tr/td/text()')
 
-    studimage = dom.xpath('//img[@class="uk-preserve-width uk-border"]/@src')[-1]
-    firstScreenData['studentImage'] = baseurl + '/' + studimage
+    studimage_elements = dom.xpath('//img[@class="uk-preserve-width uk-border"]/@src')
+    if studimage_elements:
+        studimage = studimage_elements[-1]
+        firstScreenData['studentImage'] = baseurl + '/' + studimage
+    else:
+        firstScreenData['studentImage'] = 'default-image-url'  # default image URL or logic
 
     for x, y in zip(studdetailshead, studdetailstable):
         firstScreenData[x.strip()] = y.strip()
@@ -290,6 +294,7 @@ async def login(usn, dob):
             except IndexError:
                 print("Input element not found")
                 token = None
+
             data = {
                 'username': usn,
                 'dd': dd,
@@ -318,7 +323,6 @@ async def login(usn, dob):
                 ret["proctorship"] = await scrape_proctor(resp5)
 
             ret["usn"] = usn
-
             ret["downloadLink"] = "https://www.dl.dropboxusercontent.com/s/1keww8izjzs727a/officialConnectv03.apk?dl=0"
             ret["ver"] = "0.3"
     return ret
