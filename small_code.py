@@ -7,16 +7,18 @@ from lxml import etree
 async def login(usn, dob):
     baseurl = "https://parents.msrit.edu/"
 
-    # Dummy response for testing
     dummy_response = {
         "usn": usn,
+        "dob": dob,
         "dummy_data": "This is a dummy response for testing purposes",
-        "ver": "0.1"  # Update with the desired version
+        "ver": "0.1"
     }
 
     try:
         async with aiohttp.ClientSession(trust_env=True) as session:
-            async with session.get(baseurl) as resp:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+            async with session.get(baseurl, headers=headers) as resp:
                 body = await resp.content.read()
                 dom = etree.HTML(body)
                 title = dom.xpath('//title/text()')
