@@ -6,6 +6,11 @@ from small_code import main
 app = Flask(__name__)
 
 
+@app.route('/')
+def home():
+    return 'Home Page Route'
+
+
 @app.route('/getdata', methods=['GET'])
 def get_data():
     usn = request.args.get('usn')
