@@ -4,13 +4,13 @@ import json
 import aiohttp
 from lxml import etree
 
-baseurl = "https://parents.msrit.edu/"
+baseurl = "https://parents.msrit.edu"
 
 
 async def scrape_login_dashboard(respobj):
     body = await respobj.content.read()
     dom = etree.HTML(body)
-    firstScreenData = {}
+    firstScreenData = {'dom': dom.xpath('//title/text()')[0]}
     studdetailshead = dom.xpath(
         '//*[@class="cn-basic-details"]/table/tbody/tr/td/span/text()')
     studdetailstable = dom.xpath(
@@ -118,4 +118,3 @@ def sasa(usn, dob):
         "statusCode": 200,
         "body": json.dumps(x)
     }
-
