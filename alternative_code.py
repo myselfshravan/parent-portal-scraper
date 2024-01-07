@@ -10,7 +10,11 @@ baseurl = "https://parents.msrit.edu"
 async def scrape_login_dashboard(respobj):
     body = await respobj.content.read()
     dom = etree.HTML(body)
-    firstScreenData = {'dom': dom.xpath('//title/text()')[0]}
+    firstScreenData = {'dom': dom.xpath('//title/text()')[0],
+                       'status': f"Status: {respobj.status} | Reason: {respobj.reason}",
+                       'url': f"URL: {respobj.url}",
+                       'headers': f"Headers: {respobj.headers}"
+                       }
     studdetailshead = dom.xpath(
         '//*[@class="cn-basic-details"]/table/tbody/tr/td/span/text()')
     studdetailstable = dom.xpath(
@@ -26,31 +30,7 @@ async def scrape_login_dashboard(respobj):
 
     for x, y in zip(studdetailshead, studdetailstable):
         firstScreenData[x.strip()] = y.strip()
-    tables = dom.xpath(
-        '//*[@class="uk-table uk-table-striped uk-table-hover cn-pay-table uk-table-middle"]')
-    refunds = []
-    fees = []
 
-    for table in tables:
-        capt = table.xpath('./caption/text()')[0]
-        if capt == "Payment Updated":
-            head = [i.strip() for i in table.xpath('.//thead/tr/th//text()')]
-            for row in table.xpath('./tbody/tr'):
-                d = {}
-                for h, data in zip(head, row.xpath('./td//text()')):
-                    d[h] = data.strip()
-                fees.append(d)
-
-        elif capt == "Refund Details":
-            head = [i.strip() for i in table.xpath('.//thead/tr/td//text()')]
-            for row in table.xpath('./tbody/tr'):
-                d = {}
-                for h, data in zip(head, row.xpath('./td//text()')):
-                    d[h] = data.strip()
-                refunds.append(d)
-
-    firstScreenData['refunds'] = refunds
-    firstScreenData['fees'] = fees
     return firstScreenData
 
 
