@@ -69,8 +69,8 @@ async def login(usn, dob):
                 print(resp.url)
                 body = await resp.content.read()
                 dom = etree.HTML(body)
-                token = dom.xpath('//input[@value="1"]/@name')[0]
-                print(f"token: {token}")
+                # token = dom.xpath('//input[@value="1"]/@name')[0]
+                # print(f"token: {token}")
                 data = {
                     'username': usn,
                     'dd': dd,
