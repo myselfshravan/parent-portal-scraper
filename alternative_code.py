@@ -49,8 +49,11 @@ async def login(usn, dob):
                 print(resp.url)
                 body = await resp.content.read()
                 dom = etree.HTML(body)
-                # token = dom.xpath('//input[@value="1"]/@name')[0]
-                # print(f"token: {token}")
+                try:
+                    token = dom.xpath('//input[@value="1"]/@name')[0]
+                except IndexError:
+                    token = None
+                print(f"token: {token}")
                 data = {
                     'username': usn,
                     'dd': dd,
@@ -64,7 +67,15 @@ async def login(usn, dob):
                     'return': '',
                     'ea07d18ec2752bcca07e20a852d96337': '1'
                 }
-                async with session.post(resp.url, data=data) as resp2:
+                headers = {
+                    'Referer': baseurl,
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+                cookies = session.cookie_jar.filter_cookies(resp.url)
+                print(f"Cookie: {cookies}")
+                dummy_response['cookies'] = cookies
+                dummy_response['token'] = token
+                async with session.post(resp.url, data=data, headers=headers) as resp2:
                     print(resp2)
                     x1 = await scrape_login_dashboard(resp2)
                     dummy_response.update(x1)
